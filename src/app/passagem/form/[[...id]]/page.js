@@ -6,25 +6,31 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
-import { MdOutlineArrowBack } from "react-icons/md";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { v4 } from "uuid";
 
-export default function Page() {
+export default function Page({ params }) {
+    const route = useRouter();
+    const passagens = JSON.parse(localStorage.getItem('passagem')) || [];
+    const dados = passagens.find(item => item.id == params.id);
+    const passagem = dados || { voo: '', passageiro: '', assento: '', preco: '' };
 
-    const route = useRouter() 
-
-    function salvar(dados){
-        const passagem = JSON.parse(localStorage.getItem('passagem')) || []
-        passagem.push(dados);
-        localStorage.setItem('passagem', JSON.stringify(passagem))
-        return route.push('/passagem') 
+    function salvar(dados) {
+        if (passagem.id) {
+            Object.assign(passagem, dados);
+        } else {
+            dados.id = v4();
+            passagens.push(dados);
+        }
+        localStorage.setItem('passagem', JSON.stringify(passagens));
+        return route.push('/passagem');
     }
 
     return (
-        <Pagina titulo="Passageiros">
-
+        <Pagina titulo="Passagem">
             <Formik
-                initialValues={{voo: '', passageiro: '', assento: '', preco: ''}}
-                onSubmit={values=>salvar(values)}
+                initialValues={passagem}
+                onSubmit={values => salvar(values)}
             >
                 {({
                     values,
@@ -73,15 +79,15 @@ export default function Page() {
                                 <FaCheck /> Salvar
                             </Button>
                             <Link
-                                href="/empresas"
+                                href="/passagem"
                                 className="btn btn-danger ms-2"
                             >
-                                <MdOutlineArrowBack /> Voltar
+                                <IoIosArrowRoundBack /> Voltar
                             </Link>
                         </div>
                     </Form>
                 )}
             </Formik>
         </Pagina>
-    )
+    );
 }

@@ -8,21 +8,27 @@ import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
 import { MdOutlineArrowBack } from "react-icons/md";
 
-export default function Page() {
+export default function Page({params}) {
 
-    const route = useRouter() 
+    const route = useRouter()
+
+    const empresas = JSON.parse(localStorage.getItem('empresas')) || []
+    const dados = empresas.find(item => item.id == params.id)
+    const empresa = dados || {nome: '', logo: '', site: ''}
+
     function salvar(dados){
-        const passageiros = JSON.parse(localStorage.getItem('passageiros')) || []
-        passageiros.push(dados);
-        localStorage.setItem('passageiros', JSON.stringify(passageiros))
-        return route.push('/passageiros') 
+
+        Object.assign(empresa, dados)
+        
+        localStorage.setItem('empresas', JSON.stringify(empresas))
+        return route.push('/empresas')
     }
 
     return (
-        <Pagina titulo="Passageiros">
+        <Pagina titulo="Empresa">
 
             <Formik
-                initialValues={{nome: '', documento: '', email: '', telefone: '', nascimento: ''}}
+                initialValues={empresa}
                 onSubmit={values=>salvar(values)}
             >
                 {({
@@ -40,40 +46,22 @@ export default function Page() {
                                 onChange={handleChange('nome')}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="documento">
-                            <Form.Label>Documento</Form.Label>
+                        <Form.Group className="mb-3" controlId="logo">
+                            <Form.Label>Logo</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                name="documento"
-                                value={values.documento}
-                                onChange={handleChange('documento')}
+                                name="logo"
+                                value={values.logo}
+                                onChange={handleChange('logo')}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="email">
-                            <Form.Label>Email</Form.Label>
+                        <Form.Group className="mb-3" controlId="site">
+                            <Form.Label>Site</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                name="email"
-                                value={values.uf}
-                                onChange={handleChange('email')}
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="telefone">
-                            <Form.Label>Telefone</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="telefone"
-                                value={values.telefone}
-                                onChange={handleChange('telefone')}
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="nascimento">
-                            <Form.Label>Data Nascimento</Form.Label>
-                            <Form.Control 
-                                type="date" 
-                                name="nascimento"
-                                value={values.nascimento}
-                                onChange={handleChange('nascimento')}
+                                name="site"
+                                value={values.site}
+                                onChange={handleChange('site')}
                             />
                         </Form.Group>
                         <div className="text-center">

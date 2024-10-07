@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
 import { MdOutlineArrowBack } from "react-icons/md";
+import { v4 } from "uuid";
 
 export default function Page() {
 
@@ -14,16 +15,18 @@ export default function Page() {
 
     function salvar(dados){
         const empresas = JSON.parse(localStorage.getItem('empresas')) || []
-        empresas.push(dados);
+        
+        dados.id = v4()
+        empresas.push(dados)
         localStorage.setItem('empresas', JSON.stringify(empresas))
-        return route.push('/empresas') 
+        return route.push('/empresas')
     }
 
     return (
         <Pagina titulo="Empresa">
 
             <Formik
-                initialValues={{nome: '', logo: ''}}
+                initialValues={{nome: '', logo: '', site: ''}}
                 onSubmit={values=>salvar(values)}
             >
                 {({
